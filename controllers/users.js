@@ -2,30 +2,46 @@ const router = require('express').Router()
 const { User } = require('../models')
 const { Blog } = require('../models')
 
-router.get('/', async (request, response) => {
-  const users = await User.findAll(
-    {
-    include: {
-      model: Blog,
-      attributes: {
-        exclude: ['userId']
+const userFinder = async (request, response, next) => {
+  try {
+    request.user = await User.findByPk(request.params.username)
+    if (!request.user) {
+      return response.status(404).end()
+    }
+    next()
+  } catch (error) {
+    next(error)
+  }
+}
+
+router.get('/', async (request, response, next) => {
+  try {
+    const users = await User.findAll(
+      {
+      include: {
+        model: Blog,
+        attributes: {
+          exclude: ['userId']
+        }
       }
     }
+  )
+    response.json(users)
+  } catch (error) {
+    next(error)
   }
-)
-  response.json(users)
 })
 
-router.post('/', async (request, response) => {
+router.post('/', async (request, response, next) => {
   try {
     const user = await User.create(request.body)
     response.json(user)
   } catch (error) {
-    return response.status(400).json({ error })
+    next(error)
   }
 })
 
-router.put('/:username', async (request, response) => {
+router.put('/:username', async (request, response, next) => {
   try {
     const [rowsUpdated, updatedUsers] = await User.update(request.body, 
       { 
@@ -41,13 +57,17 @@ router.put('/:username', async (request, response) => {
     const user = updatedUsers[0]
     response.json(user)
   } catch (error) {
-    return response.status(400).json({ error })
+    next(error)
   }
 })
 
-router.get('/:id', async (request, response) => {
-  const user = await User.findByPk(request.params.id)
-  response.json(user)
+router.get('/:id', async (request, response, next) => {
+  try {
+    const user = await User.findByPk(request.params.id)
+    response.json(user)
+  } catch (error) {
+    next(error)
+  }
 })
 
 module.exports = router
