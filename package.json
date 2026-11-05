@@ -1,0 +1,16 @@
+{
+  "name": "Relational-database-blogs",
+  "version": "1.0.0",
+  "description": "Realtional database backend for blogs application",
+  "main": "app.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "dotenv": "^18.0.9",
+    "express": "^5.3.0",
+    "pg": "^8.23.1",
+    "sequelize": "^6.37.8"
+  }
+  
+}
