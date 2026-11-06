@@ -2,6 +2,7 @@ const router = require('express').Router()
 const { Blog } = require('../models')
 const { User } = require('../models')
 const { tokenExtractor } = require('../util/middleware')
+const { Op } = require('sequelize')
 
 const blogFinder = async (request, response, next) => {
   try {
@@ -21,13 +22,20 @@ const blogFinder = async (request, response, next) => {
 }
 
 router.get('/', async (request, response, next) => {
+  const where = {}
+
+  if (request.query.search) {
+    where.title = { [Op.iLike]: `%${request.query.search}%` }
+  }
+
   try {
     const blogs = await Blog.findAll({
       attributes: { exclude: ['userId'] },
       include: {
         model: User,
         attributes: ['name']
-      }
+      },
+      where
     })
     response.json(blogs)
   } catch (error) {
