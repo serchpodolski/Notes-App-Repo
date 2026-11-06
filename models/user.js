@@ -1,5 +1,6 @@
 const { Model, DataTypes } = require('sequelize')
 const { sequelize } = require('../util/db')
+const bcrypt = require('bcrypt')
 
 class User extends Model {}
 
@@ -24,7 +25,7 @@ User.init({
     type: DataTypes.STRING,
     allowNull: false
   },
-  passwordHash: {
+  password: {
     type: DataTypes.STRING,
     allowNull: false
   }
@@ -33,7 +34,17 @@ User.init({
   sequelize,
   timestamps: true,
   underscored: true, 
-  modelName: 'user' 
+  modelName: 'user',
+  hooks: {
+    beforeCreate: async (user) => {
+      const saltRounds = 10
+      user.password = await bcrypt.hash(user.password, saltRounds)
+    },
+    beforeUpdate: async (user) => {
+      const saltRounds = 10
+      user.password = await bcrypt.hash(user.password, saltRounds)
+    }
+  } 
 }
 )
 
