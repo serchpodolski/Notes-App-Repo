@@ -4,7 +4,11 @@ const { Blog } = require('../models')
 
 const userFinder = async (request, response, next) => {
   try {
-    request.user = await User.findByPk(request.params.username)
+    request.user = await User.findByPk(request.params.username, {
+      include: {
+        model: Blog,
+      }
+    })
     if (!request.user) {
       return response.status(404).end()
     }
@@ -61,10 +65,14 @@ router.put('/:username', async (request, response, next) => {
   }
 })
 
-router.get('/:id', async (request, response, next) => {
+router.get('/:id', userFinder, async (request, response, next) => {
   try {
-    const user = await User.findByPk(request.params.id)
-    response.json(user)
+    // const user = await User.findByPk(request.params.id)
+    if (!request.user) {
+      return response.status(404).json({ error: 'user not found' })
+    } else {
+      response.json(request.user)
+    }
   } catch (error) {
     next(error)
   }

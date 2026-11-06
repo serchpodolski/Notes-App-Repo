@@ -5,7 +5,12 @@ const { tokenExtractor } = require('../util/middleware')
 
 const blogFinder = async (request, response, next) => {
   try {
-    request.blog = await Blog.findByPk(request.params.id)
+    request.blog = await Blog.findByPk(request.params.id, {
+      include: {
+        model: User,
+        attributes: ['name']
+      }
+    })
     if (!request.blog) {
       return response.status(404).end()
     }
@@ -43,7 +48,11 @@ router.post('/', tokenExtractor, async (request, response, next) => {
 
 router.get('/:id', blogFinder, (request, response, next) => {
   try {
-    response.json(request.blog)
+    if (!request.blog) {
+      return response.status(404).end()
+    } else {
+      response.json(request.blog)
+    }
   } catch (error) {
     next(error)
   }
