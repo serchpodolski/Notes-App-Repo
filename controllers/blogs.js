@@ -22,11 +22,15 @@ const blogFinder = async (request, response, next) => {
 }
 
 router.get('/', async (request, response, next) => {
-  const where = {}
+  let where = {}
 
   if (request.query.search) {
-    where.title = { [Op.iLike]: `%${request.query.search}%` }
-  }
+    where = { 
+      [Op.or]: [
+        { title: { [Op.iLike]: `%${request.query.search}%` }},
+        { author: { [Op.iLike]: `%${request.query.search}%` }}
+      ]
+  }}
 
   try {
     const blogs = await Blog.findAll({
