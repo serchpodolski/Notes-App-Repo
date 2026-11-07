@@ -44,12 +44,11 @@ jobs:
           SECRET: secret
           TESTING: true
           
+          # REMOVING THESE STEPS AS THER ARE BLOKING THE TESTS THAT PASSED LOCALLY
       # - name: Wait for application to be ready
       #   run: npx wait-on http-get://localhost:3001 -t 60000
       
-      - name: Run tests
-        run: npm test
-  
+      
       # - name: Debug if wait-on fails
       #   if: failure()
       #   run: |
@@ -57,7 +56,9 @@ jobs:
       #     ps aux | grep node
       #     echo "Checking app.log if it exists:"
       #     cat app.log || true
-              
+      
+      - name: Run tests
+        run: npm test
 
       - name: Print application logs on failure
         if: failure()
