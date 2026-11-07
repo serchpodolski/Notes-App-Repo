@@ -37,26 +37,26 @@ jobs:
         run: npm ci
         
       - name: Start application
-        run: npm run start:test > app.log 2>&1 & 
+        run: npm run start:test > app.log 2>&1 & sleep 5
         env:
           TEST_DATABASE_URL: postgresql://postgres:postgres@localhost:5432/test_db?sslmode=disable
           PORT: 3001
           SECRET: secret
           TESTING: true
           
-      - name: Wait for application to be ready
-        run: npx wait-on http-get://localhost:3001 -t 60000
+      # - name: Wait for application to be ready
+      #   run: npx wait-on http-get://localhost:3001 -t 60000
       
       - name: Run tests
         run: npm test
   
-      - name: Debug if wait-on fails
-        if: failure()
-        run: |
-          echo "Checking if node processes are running:"
-          ps aux | grep node
-          echo "Checking app.log if it exists:"
-          cat app.log || true
+      # - name: Debug if wait-on fails
+      #   if: failure()
+      #   run: |
+      #     echo "Checking if node processes are running:"
+      #     ps aux | grep node
+      #     echo "Checking app.log if it exists:"
+      #     cat app.log || true
               
 
       - name: Print application logs on failure
