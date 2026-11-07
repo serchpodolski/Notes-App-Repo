@@ -23,7 +23,7 @@ const start = async () => {
   try {
     await connectToDatabase()
     await syncModels()
-    app.listen(PORT, '127.0.0.1', () => {
+    app.listen(PORT, () => {
       console.log(`Server running on port ${PORT}`)
     })
   } catch (error) {
