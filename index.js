@@ -20,16 +20,18 @@ app.use('/api/authors', authorRouter)
 app.use('/api/reset', resetRouter)
 
 const start = async () => {
-  await connectToDatabase()
-  await syncModels()
-  app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`)
-  })
+  try {
+    await connectToDatabase()
+    await syncModels()
+    app.listen(PORT, () => {
+      console.log(`Server running on port ${PORT}`)
+    })
+  } catch (error) {
+    console.log(error)
+    process.exit(1)
+  }
 }
 
 app.use(middleware.errorHandler)
 
-start().catch((err) => {
-  console.error('Failed to start server:', err)
-  process.exit(1)
-})
+start()
